@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="col-md-12 text-center">
+      <a class="btn btn-primary btn-sm" routerLink="/manage-users/add"
+        ><i class="fas fa-plus"></i> <span translate>Add user</span></a
+      >
+    </div>
+  </div>
+
+  <manage-users-list
+    [users]="getUsers()"
+    [state.loading]="isRequesting()"
+    (requestDelete)="requestDelete($event)"
+  ></manage-users-list>
+</div>

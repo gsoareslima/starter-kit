@@ -1,0 +1,97 @@
+<div class="row mb-3" *ngIf="!loading">
+  <div class="col-md-9"></div>
+  <div class="col-md-3 text-right">
+    <form [formGroup]="formFilter" (ngSubmit)="filter($event)">
+      <div class="input-group">
+        <input class="form-control" placeholder="Pesquisar..." max="100" formControlName="pattern" />
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="!loading; else ifLoading">
+  <div class="card shadow mb-5">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <cdk-virtual-scroll-viewport class="virtual-scroll" itemSize="80">
+            <div class="table-resplonsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th class="align-bottom" translate>Login</th>
+                    <th class="align-bottom" translate>CreatedAt</th>
+                    <th class="align-bottom" translate>EditedAt</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *cdkVirtualFor="let user of getUsers(); trackBy: trackByUserIdentifier">
+                    <td class="align-middle text-center td-avatar">
+                      <avatar [url]="user.getAvatarUrl()" [size]="'50px'" [rounded]="'circle'"></avatar>
+                    </td>
+                    <td class="align-middle text-center td-user-type" title="{{ getTypeLabel(user) | translate }}">
+                      <i [ngClass]="getTypeIcon(user)"></i>
+                    </td>
+                    <td class="align-middle">
+                      {{ user.getLogin() }}<br />
+                      <small class="text-muted">#{{ user.getId() }}</small>
+                    </td>
+                    <td class="align-middle">{{ user.getCreatedAt() | dateFormat }}</td>
+                    <td class="align-middle">{{ user.getEditedAt() | dateFormat: '-' }}</td>
+                    <td class="align-middle text-right">
+                      <button
+                        class="btn btn-xs btn-info"
+                        title="Acessar {{ user.getLogin() }}"
+                        (click)="openGithubPage(user)"
+                      >
+                        <i class="fas fa-share"></i>
+                      </button>
+                      |
+                      <a
+                        class="btn btn-xs btn-primary"
+                        title="Editar {{ user.getLogin() }}"
+                        [routerLink]="'/manage-users/edit/' + user.getLogin()"
+                        ><i class="fas fa-pencil-alt"></i
+                      ></a>
+                      <button
+                        class="btn btn-xs btn-danger"
+                        title="Excluir {{ user.getLogin() }}"
+                        (click)="onRequestDelete(user)"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="!getUsers().length">
+                    <td colspan="6">
+                      <span translate *ngIf="filterPattern">users.search.notFound</span>
+                      <span translate *ngIf="!filterPattern">users.search.empty</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #ifLoading>
+  <div class="row mt-5">
+    <div class="col-md-12 text-center">
+      <app-loader [isLoading]="loading"></app-loader>
+      <p>
+        Carregando usuários.<br />
+        Aguarde alguns instantes...
+      </p>
+    </div>
+  </div>
+</ng-template>

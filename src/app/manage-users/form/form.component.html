@@ -1,0 +1,110 @@
+<div class="container-fluid" *ngIf="isValidAdd() || isValidEdit(); else invalidForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-12 text-left">
+          <h3 *ngIf="isValidAdd()"><i class="fas fa-plus"></i> {{ 'Add user' | translate }}</h3>
+          <h3 *ngIf="isValidEdit()">
+            <i class="fas fa-pencil-alt"></i> <span class="font-italic">{{ user.getLogin() }}</span>
+          </h3>
+        </div>
+      </div>
+
+      <div class="card shadow mb-5">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <form [formGroup]="form" (ngSubmit)="onSubmit()" #ngForm="ngForm">
+                <div class="row">
+                  <div class="col-lg-3 text-center" *ngIf="isValidEdit()">
+                    <avatar [url]="user.getAvatarUrl()" size="200px" rounded="circle"></avatar>
+                  </div>
+                  <div [ngClass]="{ 'col-lg-9': isValidEdit(), 'col-12': !isValidEdit() }">
+                    <div class="form-group">
+                      <label translate>Login</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="login"
+                        placeholder="{{ 'Write here' | translate }}..."
+                      />
+                      <div
+                        *ngIf="
+                          form.get('login').invalid &&
+                          (ngForm.submitted || form.get('login').dirty || form.get('login').touched)
+                        "
+                        class="text-danger"
+                      >
+                        <div *ngIf="form.get('login').errors.required" translate="required"></div>
+                        <div
+                          *ngIf="form.get('login').errors.minlength"
+                          translate="minlength"
+                          [translateParams]="{ min: form.get('login').errors.minlength.requiredLength }"
+                        ></div>
+                        <div
+                          *ngIf="form.get('login').errors.maxlength"
+                          translate="maxlength"
+                          [translateParams]="{ max: form.get('login').errors.maxlength.requiredLength }"
+                        ></div>
+                        <div *ngIf="form.get('login').errors.pattern" translate="login.invalid"></div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label translate>Type</label>
+                      <select class="form-control" formControlName="type">
+                        <option *ngFor="let type of ['User', 'Organization']; let i = index" [value]="type">
+                          {{ type | translate }}
+                        </option>
+                      </select>
+                      <div
+                        *ngIf="
+                          form.get('type').invalid &&
+                          (ngForm.submitted || form.get('type').dirty || form.get('type').touched)
+                        "
+                        class="text-danger"
+                      >
+                        <div *ngIf="form.get('type').errors.required" translate="required"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12 text-center">
+                    <a routerLink="/manage-users" class="btn btn-sm btn-primary"
+                      ><i class="fas fa-angle-double-left"></i> | <span translate="Back"></span
+                    ></a>
+                    <button class="btn btn-success btn-sm" type="submit" translate>
+                      <i class="fas fa-save"></i> | <span translate="Save"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div
+                    class="col-md-12 text-center text-danger"
+                    translate="form.invalid"
+                    *ngIf="ngForm.submitted && form.invalid"
+                  ></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #invalidForm>
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h1>:(</h1>
+      <span translate="form.error.onLoad.userNotFound"></span>
+      <hr />
+      <a routerLink="/manage-users" class="btn btn-sm btn-primary"
+        ><i class="fas fa-angle-double-left"></i> | <span translate="Back"></span
+      ></a>
+    </div>
+  </div>
+</ng-template>

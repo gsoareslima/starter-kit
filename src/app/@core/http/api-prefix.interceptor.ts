@@ -12,8 +12,12 @@ import { environment } from '@env/environment';
 })
 export class ApiPrefixInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!/^(http|https):/i.test(request.url)) {
-      request = request.clone({ url: environment.chuckNorrisServerUrl + request.url });
+    if (/^\/?chuckNorris\//i.test(request.url)) {
+      let chuckNorrisUrl = request.url.replace(/\/?chuckNorris/, '');
+      request = request.clone({ url: environment.chuckNorrisServerUrl + chuckNorrisUrl });
+    } else if (/^\/?github\//i.test(request.url)) {
+      let githubUrl = request.url.replace(/\/?github/, '');
+      request = request.clone({ url: environment.github.url.api + githubUrl });
     }
     return next.handle(request);
   }
